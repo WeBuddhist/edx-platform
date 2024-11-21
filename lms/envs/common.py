@@ -2319,6 +2319,7 @@ INSTALLED_APPS = [
     'openedx.features.discounts',
     'openedx.features.effort_estimation',
     'openedx.features.name_affirmation_api.apps.NameAffirmationApiConfig',
+    'openedx.features.offline_mode.apps.OfflineModeConfig',
 
     'lms.djangoapps.experiments',
 
@@ -3677,3 +3678,8 @@ SSL_AUTH_EMAIL_DOMAIN = "MIT.EDU"
 SSL_AUTH_DN_FORMAT_STRING = (
     "/C=US/ST=Massachusetts/O=Massachusetts Institute of Technology/OU=Client CA v1/CN={0}/emailAddress={1}"
 )
+
+# .. setting_name: OFFLINE_SERVICE_WORKER_USERNAME
+# .. setting_default: offline_mode_worker
+# .. setting_description: Set the username for generating offline content. The user is used for rendering blocks.
+OFFLINE_SERVICE_WORKER_USERNAME = "offline_mode_worker"
