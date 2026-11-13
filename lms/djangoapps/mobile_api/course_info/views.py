@@ -441,6 +441,8 @@ class BlocksInfoInCourseView(BlocksInCourseView):
         If offline content is available for the block, adds the offline download data to the block info.
         """
         for block_id, block_info in blocks_info_data.items():
+            # TODO(content-groups): only attach the link when this learner can already open the
+            # block. The outline hides other groups' units; this is where a group ZIP gets matched.
             if offline_content_path := get_offline_block_content_path(usage_key=UsageKey.from_string(block_id)):
                 block_info.update({
                     'offline_download': {

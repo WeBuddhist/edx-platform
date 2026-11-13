@@ -3683,3 +3683,6 @@ SSL_AUTH_DN_FORMAT_STRING = (
 # .. setting_default: offline_mode_worker
 # .. setting_description: Set the username for generating offline content. The user is used for rendering blocks.
 OFFLINE_SERVICE_WORKER_USERNAME = "offline_mode_worker"
+
+# Same folder block_storage_path() writes. clear_deleted_content() reads this setting.
+OFFLINE_CONTENT_PATH_TEMPLATE = "offline_content/{course_id}/"

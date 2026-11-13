@@ -37,6 +37,8 @@ class XBlockRenderer:
     def __init__(self, usage_key_string, user=None, request=None):
         self.usage_key = UsageKey.from_string(usage_key_string)
         self.usage_key = self.usage_key.replace(course_key=modulestore().fill_in_run(self.usage_key.course_key))
+        # TODO(content-groups): always the service user. For a group-limited block, pass a member
+        # of that group. Keep the account non-staff so hidden and unreleased blocks stay out.
         self.user = user or get_offline_service_user()
         self.request = request or self.generate_request()
 

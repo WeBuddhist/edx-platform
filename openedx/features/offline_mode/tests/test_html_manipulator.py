@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from unittest import TestCase
 from unittest.mock import MagicMock, Mock, call, patch
 
-from openedx.features.offline_mode.constants import MATHJAX_CDN_URL, MATHJAX_STATIC_PATH
+from openedx.features.offline_mode.constants import MATHJAX_CDN_URL
 from openedx.features.offline_mode.html_manipulator import HtmlManipulator
 
 
@@ -51,19 +51,17 @@ class HtmlManipulatorTestCase(TestCase):
 
     @patch('openedx.features.offline_mode.html_manipulator.save_mathjax_to_xblock_assets')
     def test_replace_mathjax_link(self, save_mathjax_to_xblock_assets: MagicMock) -> None:
-        html_data_mock = f'<script src="{MATHJAX_CDN_URL}"></script>'
-        xblock_mock = Mock()
-        temp_dir_mock = 'temp_dir_mock'
-        html_manipulator = HtmlManipulator(xblock_mock, html_data_mock, temp_dir_mock)
-
-        expected_html_data_after_replacing = f'<script src="{MATHJAX_STATIC_PATH}"></script>'
-
-        self.assertEqual(html_manipulator.html_data, html_data_mock)
+        html_data_mock = (
+            f'<p>[mathjaxinline]x^2[/mathjaxinline]</p>'
+            f'<script src="{MATHJAX_CDN_URL}?config=TeX-MML-AM_SVG"></script>'
+        )
+        html_manipulator = HtmlManipulator(Mock(), html_data_mock, 'temp_dir_mock')
 
         html_manipulator._replace_mathjax_link()  # lint-amnesty, pylint: disable=protected-access
 
-        save_mathjax_to_xblock_assets.assert_called_once_with(html_manipulator.temp_dir)
-        self.assertEqual(html_manipulator.html_data, expected_html_data_after_replacing)
+        save_mathjax_to_xblock_assets.assert_not_called()
+        self.assertNotIn(MATHJAX_CDN_URL, html_manipulator.html_data)
+        self.assertIn('[mathjaxinline]x^2[/mathjaxinline]', html_manipulator.html_data)
 
     @patch('openedx.features.offline_mode.html_manipulator.save_asset_file')
     def test_replace_static_links(self, save_asset_file_mock: MagicMock) -> None:

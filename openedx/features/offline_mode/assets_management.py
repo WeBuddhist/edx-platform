@@ -3,6 +3,7 @@ This module contains utility functions for managing assets and files.
 """
 import logging
 import os
+
 import requests
 
 from botocore.exceptions import ClientError
@@ -156,6 +157,9 @@ def save_mathjax_to_xblock_assets(temp_dir):
     """
     file_path = os.path.join(temp_dir, MATHJAX_STATIC_PATH)
     if not os.path.exists(file_path):
+        # The draft opens assets/js/MathJax-2.7.5.js without creating assets/js
+        # first, which raises FileNotFoundError. Create the folder before writing.
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         response = requests.get(MATHJAX_CDN_URL)
         with open(file_path, 'wb') as file:
             file.write(response.content)
