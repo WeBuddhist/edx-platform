@@ -9,8 +9,8 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 
-from .assets_management import save_asset_file, save_external_file, save_mathjax_to_xblock_assets
-from .constants import MATHJAX_CDN_URL, MATHJAX_STATIC_PATH
+from .assets_management import save_asset_file, save_external_file, save_mathjax_to_xblock_assets  # pylint: disable=unused-import
+from .constants import MATHJAX_CDN_URL, MATHJAX_STATIC_PATH  # pylint: disable=unused-import
 
 
 class HtmlManipulator:
@@ -43,9 +43,25 @@ class HtmlManipulator:
         """
         Replace MathJax CDN link with local path to MathJax.js file.
         """
-        save_mathjax_to_xblock_assets(self.temp_dir)
-        mathjax_pattern = re.compile(fr'src="{MATHJAX_CDN_URL}[^"]*"')
-        self.html_data = mathjax_pattern.sub(f'src="{MATHJAX_STATIC_PATH}"', self.html_data)
+        # MathJax is turned off for offline ZIPs. Each block would otherwise get
+        # its own MathJax file, and this course does not use formulas.
+        #
+        # To turn the original download back on:
+        #   1. Delete the 5 lines starting at "self.html_data = re.sub(" and ending at its ")".
+        #   2. Delete the "return" line below them.
+        #   3. Remove the "# " at the start of each line in the commented block.
+        # That block is the original behavior: it downloads one MathJax.js file
+        # into every block, with no check for a formula.
+        self.html_data = re.sub(
+            r'<script\b[^>]*\bsrc="https://cdn\.jsdelivr\.net/npm/mathjax@[^"]*"[^>]*>\s*</script>',
+            '',
+            self.html_data,
+        )
+        return
+
+        # save_mathjax_to_xblock_assets(self.temp_dir)
+        # mathjax_pattern = re.compile(fr'src="{MATHJAX_CDN_URL}[^"]*"')
+        # self.html_data = mathjax_pattern.sub(f'src="{MATHJAX_STATIC_PATH}"', self.html_data)
 
     def _replace_static_links(self):
         """

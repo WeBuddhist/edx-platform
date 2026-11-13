@@ -361,6 +361,7 @@ class AssetsManagementTestCase(TestCase):
 
         os_mock.path.join.assert_called_once_with(temp_dir_mock, MATHJAX_STATIC_PATH)
         os_mock.path.exists.assert_called_once_with(os_mock.path.join.return_value)
+        os_mock.makedirs.assert_called_once_with(os_mock.path.dirname.return_value, exist_ok=True)
         requests_get_mock.assert_called_once_with(MATHJAX_CDN_URL)
         context_manager_mock.assert_called_once_with(os_mock.path.join.return_value, 'wb')
         context_manager_mock.return_value.__enter__.return_value.write.assert_called_once_with(
@@ -385,6 +386,7 @@ class AssetsManagementTestCase(TestCase):
 
         os_mock.path.join.assert_called_once_with(temp_dir_mock, MATHJAX_STATIC_PATH)
         os_mock.path.exists.assert_called_once_with(os_mock.path.join.return_value)
+        os_mock.makedirs.assert_not_called()
         requests_get_mock.assert_not_called()
         context_manager_mock.assert_not_called()
         logger_mock.assert_not_called()

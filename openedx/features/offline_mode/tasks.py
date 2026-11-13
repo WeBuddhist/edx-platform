@@ -25,6 +25,10 @@ def generate_offline_content_for_course(course_id):
     course_key = CourseKey.from_string(course_id)
     clear_deleted_content(course_key)
 
+    # TODO(content-groups): blocks restricted to a content group are skipped, because the
+    # service user is in no group and the render check denies them. When needed, build one ZIP
+    # for that group by rendering as a member of the group. Do not render as staff.
+
     for offline_supported_block_type in OFFLINE_SUPPORTED_XBLOCKS:
         for xblock in modulestore().get_items(course_key, qualifiers={'category': offline_supported_block_type}):
             is_not_closed = not hasattr(xblock, 'closed') or not xblock.closed()
